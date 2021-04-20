@@ -7,9 +7,18 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -36,15 +45,20 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
+    override fun onBackPressed() {
+        when(true){
+            !viewModel.input -> viewModel.returnInput()
+            else -> super.onBackPressed()
+        }
+    }
+}
 
 @ExperimentalAnimationApi
 @Composable
 fun Input(
     viewModel:UiState
 ){
-
 
     AnimatedVisibility(visible = viewModel.input) {
         Column(
@@ -65,6 +79,12 @@ fun Input(
             Spacer(modifier = Modifier.padding(vertical = 25.dp))
             Button(onClick = {
                 viewModel.input = false
+                viewModel.totalScore = (
+                        (viewModel.totalNote.toInt() - 5) * 1125
+                                + 825 + 900 + 975 + 1050 + 1125
+                )
+
+
             }) {
                 Text("确认")
             }
@@ -80,8 +100,6 @@ fun Test(
     viewModel:UiState
 ) {
 
-    var score by remember{ mutableStateOf(0)}
-
     AnimatedVisibility(visible = !viewModel.input) {
         Box(
             modifier = Modifier
@@ -93,45 +111,16 @@ fun Test(
                     .padding(top = 50.dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                WorkSpacer(score,viewModel)
+                WorkSpacer(viewModel.score,viewModel)
                 Spacer(Modifier.padding(vertical = 50.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Button(onClick = {
-                        score += 100
-
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFF8EB1CF)
-                    ), modifier = Modifier.size(120.dp)
+                if(viewModel.totalNote != "") {
+                    AnimatedVisibility(visible = viewModel.compare( viewModel.totalCombo, viewModel.totalNote.toInt())
                     ) {
-                        Text("Excellent")
+                        Buttons(viewModel)
                     }
-                    Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
-                    Button(onClick = {
-
-
-
-
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFFF7EE79)
-                    ),modifier = Modifier.size(120.dp)
+                    AnimatedVisibility(visible = !(viewModel.compare( viewModel.totalCombo, viewModel.totalNote.toInt()))
                     ) {
-                        Text("Good")
-                    }
-                    Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
-                    Button(onClick = {
-
-
-
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFFF78080)
-                    ),modifier = Modifier.size(120.dp)
-                    ) {
-                        Text("Miss")
+                        Result(viewModel)
                     }
                 }
             }
@@ -139,19 +128,27 @@ fun Test(
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
 fun WorkSpacer(
     score:Int,
     viewModel: UiState
 ){
+
     Text(
-        text = "当前分数： $score",
+        text = "总分： ${viewModel.totalScore}",
+        fontWeight = FontWeight.W900,
+        modifier = Modifier.padding(15.dp)
+    )
+
+    Text(
+        text = "当前分数： ${viewModel.currentScore}",
         fontWeight = FontWeight.W900,
         modifier = Modifier
             .padding(15.dp)
             .animateContentSize(),
-
     )
+
     Text(
         text = "总音符数量： ${viewModel.totalNote}",
         fontWeight = FontWeight.W900,
@@ -177,4 +174,67 @@ fun WorkSpacer(
         modifier = Modifier.padding(15.dp),
         color = Color(0xFFF78080)
     )
+}
+
+@Composable
+fun Buttons(
+    viewModel: UiState
+){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ){
+        Button(onClick = {
+            viewModel.currentCombo++
+            viewModel.totalCombo++
+            viewModel.algorithm(1)
+            viewModel.excellent +=1
+
+        }, colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(0xFF8EB1CF)
+        ), modifier = Modifier.size(120.dp)
+        ) {
+            Text("Excellent")
+        }
+        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+
+        Button(onClick = {
+            viewModel.currentCombo++
+            viewModel.totalCombo++
+            viewModel.algorithm(2)
+            viewModel.good +=1
+
+        }, colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(0xFFF7EE79)
+        ),modifier = Modifier.size(120.dp)
+        ) {
+            Text("Good")
+        }
+        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+
+        Button(onClick = {
+            viewModel.currentCombo = 0
+            viewModel.totalCombo++
+            viewModel.miss += 1
+
+        }, colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(0xFFF78080)
+        ),modifier = Modifier.size(120.dp)
+        ) {
+            Text("Miss")
+        }
+    }
+}
+
+@Composable
+fun Result(
+    viewModel: UiState
+) {
+    viewModel.result()
+    Column (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(viewModel.resultText)
+    }
 }

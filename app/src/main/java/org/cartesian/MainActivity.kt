@@ -61,7 +61,6 @@ fun Input(
                 label = {
                     Text("输入音符总数")
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Spacer(modifier = Modifier.padding(vertical = 25.dp))
             Button(onClick = {
@@ -105,7 +104,8 @@ fun Test(
 
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0xFF8EB1CF)
-                    )) {
+                    ), modifier = Modifier.size(120.dp)
+                    ) {
                         Text("Excellent")
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 10.dp))
@@ -117,7 +117,8 @@ fun Test(
 
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0xFFF7EE79)
-                    )) {
+                    ),modifier = Modifier.size(120.dp)
+                    ) {
                         Text("Good")
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 10.dp))
@@ -128,7 +129,8 @@ fun Test(
 
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0xFFF78080)
-                    )) {
+                    ),modifier = Modifier.size(120.dp)
+                    ) {
                         Text("Miss")
                     }
                 }
@@ -157,20 +159,20 @@ fun WorkSpacer(
     )
 
     Text(
-        text = "Excellent： 245x",
+        text = "Excellent： ${viewModel.excellent}",
         fontWeight = FontWeight.W900,
         modifier = Modifier.padding(15.dp),
         color = Color(0xFF8EB1CF)
     )
 
     Text(
-        text = "Good： 245x",
+        text = "Good： ${viewModel.good}",
         fontWeight = FontWeight.W900,
         modifier = Modifier.padding(15.dp),
         color = Color(0xFFF7EE79)
     )
     Text(
-        text = "Miss： 245x",
+        text = "Miss： ${viewModel.miss}",
         fontWeight = FontWeight.W900,
         modifier = Modifier.padding(15.dp),
         color = Color(0xFFF78080)

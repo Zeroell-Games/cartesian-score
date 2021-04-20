@@ -11,4 +11,9 @@ class UiState: ViewModel() {
 
     var totalNote by mutableStateOf("")
 
+    var currentNote by mutableStateOf(0)
+
+    var excellent by mutableStateOf(0)
+    var good by mutableStateOf(0)
+    var miss by mutableStateOf(0)
 }

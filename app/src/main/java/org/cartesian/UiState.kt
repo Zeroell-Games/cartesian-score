@@ -39,39 +39,10 @@ class UiState: ViewModel() {
     fun algorithm(
         noteType: Int
     ) {
-        when(currentCombo) {
-            1 -> currentScore += (1.1 * when(noteType) {
-                1 -> 750
-                else -> 550
-            }
-          )
-            2 -> currentScore += (1.2 * when(noteType) {
-                1 -> 750
-                else -> 550
-            }
-                    )
-            3 -> currentScore += (1.3 * when(noteType) {
-                1 -> 750
-                else -> 550
-            }
-                    )
-            4 -> currentScore += (1.4 * when(noteType) {
-                1 -> 750
-                else -> 550
-            }
-                    )
-            5 -> currentScore += (1.5 * when(noteType) {
-                1 -> 750
-                else -> 550
-            }
-                    )
-            else -> currentScore += (1.5 * when(noteType) {
-                    1 -> 750
-                    else -> 550
-                }
-                    )
-
-        }
+        currentScore += (1 + minOf(currentCombo, 5) / 10.0 ) * (when(true) {
+            noteType == 1 -> 750
+            else -> 550
+        })
     }
 
     fun result() {

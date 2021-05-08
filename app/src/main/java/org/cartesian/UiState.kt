@@ -39,8 +39,8 @@ class UiState: ViewModel() {
     fun algorithm(
         noteType: Int
     ) {
-        currentScore += (1 + minOf(currentCombo, 5) / 10.0 ) * (when(true) {
-            noteType == 1 -> 750
+        currentScore += (1 + minOf(currentCombo, 5) / 10.0 ) * (when(noteType) {
+            1 -> 750
             else -> 550
         })
     }
